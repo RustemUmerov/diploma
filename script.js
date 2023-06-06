@@ -55,86 +55,81 @@ function createFilmSection(film) {
 function createSeancesList(hall, film, seances, selectedDate) {
   const seancesList = document.createElement('ul');
   seancesList.classList.add('movie-seances__list');
-
   const hallSeances = seances.result.filter((seance) => seance.seance_filmid === film.film_id && seance.seance_hallid === hall.hall_id);
-  hallSeances.forEach((seance) => {
-    const currentTime = new Date(); // Текущее время
-    const seanceTime = new Date();
-    const [hours, minutes] = seance.seance_time.split(':');
-    seanceTime.setHours(hours);
-    seanceTime.setMinutes(minutes);
 
-    // Проверяем, если время сеанса еще не прошло
-	if (selectedDate === null || selectedDate.toDateString() === new Date().toDateString()){
-		const currentTime = new Date();
-		if (seanceTime > currentTime) {
-      const seanceTimeBlock = document.createElement('li');
-      seanceTimeBlock.classList.add('movie-seances__time-block');
-      seancesList.appendChild(seanceTimeBlock);
+	if (hallSeances.length > 0) {
+		hallSeances.forEach((seance) => {
+			const currentTime = new Date(); // Текущее время
+			const seanceTime = new Date();
+			const [hours, minutes] = seance.seance_time.split(':');
+			seanceTime.setHours(hours);
+			seanceTime.setMinutes(minutes);
 
-      const seanceTimeLink = document.createElement('a');
-      seanceTimeLink.classList.add('movie-seances__time');
-      seanceTimeLink.href = 'hall.html'; // Ссылка может требоваться настроить
-      seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      seanceTimeBlock.appendChild(seanceTimeLink);
+				// Проверяем, если время сеанса еще не прошло
+			if (selectedDate === null || selectedDate.toDateString() === new Date().toDateString()){
+				const currentTime = new Date();
+				if (seanceTime > currentTime) {
+					const seanceTimeBlock = document.createElement('li');
+					seanceTimeBlock.classList.add('movie-seances__time-block');
+					seancesList.appendChild(seanceTimeBlock);
+					const seanceTimeLink = document.createElement('a');
+					seanceTimeLink.classList.add('movie-seances__time');
+					seanceTimeLink.href = 'hall.html'; 
+					seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+					seanceTimeBlock.appendChild(seanceTimeLink);
 
 	
-seanceTimeLink.addEventListener('click', function(event) {
-  // Запоминаем данные о выбранном сеансе
-  const timestamp = seanceTime.getTime() / 1000;
-  const hallId = hall.hall_id;
-  const seanceId = seance.seance_id;
-  
-  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-  sessionStorage.setItem('selectedSeanceHallId', hallId);
-  sessionStorage.setItem('selectedSeanceId', seanceId);
-  
-  // Вывод данных в консоль для проверки
-  console.log('Запомненные данные о сеансе:');
-  console.log('Timestamp:', timestamp);
-  console.log('Hall ID:', hallId);
-  console.log('Seance ID:', seanceId);
-  
-  // Переход на страницу "hall.html"
-  // Может потребоваться дополнительная настройка ссылки в случае необходимости передачи данных через URL-параметры или POST-запрос
-});
+					seanceTimeLink.addEventListener('click', function(event) {
+					  // Запоминаем данные о выбранном сеансе
+					  const timestamp = seanceTime.getTime() / 1000;
+					  const hallId = hall.hall_id;
+					  const seanceId = seance.seance_id;
+					  
+					  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
+					  sessionStorage.setItem('selectedSeanceHallId', hallId);
+					  sessionStorage.setItem('selectedSeanceId', seanceId);
+					  
+					  // Вывод данных в консоль для проверки
+					  console.log('Запомненные данные о сеансе:');
+					  console.log('Timestamp:', timestamp);
+					  console.log('Hall ID:', hallId);
+					  console.log('Seance ID:', seanceId);
+					});
+				}
+			}else {
+				const seanceTimeBlock = document.createElement('li');
+				seanceTimeBlock.classList.add('movie-seances__time-block');
+				seancesList.appendChild(seanceTimeBlock);
 
-
-    }
-  }else {
-      const seanceTimeBlock = document.createElement('li');
-      seanceTimeBlock.classList.add('movie-seances__time-block');
-      seancesList.appendChild(seanceTimeBlock);
-
-      const seanceTimeLink = document.createElement('a');
-      seanceTimeLink.classList.add('movie-seances__time');
-      seanceTimeLink.href = 'hall.html'; // Ссылка может требоваться настроить
-      seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      seanceTimeBlock.appendChild(seanceTimeLink);
-seanceTimeLink.addEventListener('click', function(event) {
-  // Запоминаем данные о выбранном сеансе
-  const timestamp = seanceTime.getTime() / 1000; 
-  const hallId = hall.hall_id; 
-  const seanceId = seance.seance_id; 
+				const seanceTimeLink = document.createElement('a');
+				seanceTimeLink.classList.add('movie-seances__time');
+				seanceTimeLink.href = 'hall.html'; 
+				seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+				seanceTimeBlock.appendChild(seanceTimeLink);
+				seanceTimeLink.addEventListener('click', function(event) {
+					const timestamp = seanceTime.getTime() / 1000; 
+					const hallId = hall.hall_id; 
+					const seanceId = seance.seance_id; 
+					sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
+					sessionStorage.setItem('selectedSeanceHallId', hallId);
+					sessionStorage.setItem('selectedSeanceId', seanceId);
   
-  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-  sessionStorage.setItem('selectedSeanceHallId', hallId);
-  sessionStorage.setItem('selectedSeanceId', seanceId);
+					// Вывод данных в консоль для проверки
+					console.log('Запомненные данные о сеансе:');
+					console.log('Timestamp:', timestamp);
+					console.log('Hall ID:', hallId);
+					console.log('Seance ID:', seanceId);
+				});
+			}
+		});
+	}
   
-  // Вывод данных в консоль для проверки
-  console.log('Запомненные данные о сеансе:');
-  console.log('Timestamp:', timestamp);
-  console.log('Hall ID:', hallId);
-  console.log('Seance ID:', seanceId);
-  
-  // Переход на страницу "hall.html"
-  // Может потребоваться дополнительная настройка ссылки в случае необходимости передачи данных через URL-параметры или POST-запрос
-});
-    }
-  });
-
   return seancesList;
 }
+
+
+
+
 function handleSeanceClick(timestamp, hallId, seanceId) {
   // Запоминаем данные о выбранном сеансе
   sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
@@ -193,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
 
+
       buildMovieBlocks();
 
       const currentDate = new Date();
@@ -209,7 +205,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const link = document.createElement('a');
         link.classList.add('page-nav__day');
         link.href = '#';
-
+		
+		if (i === 0) {
+    link.classList.add('page-nav__day_today');
+  }
+		if (date.getDay() === 0 || date.getDay() === 6) {
+    link.classList.add('page-nav__day_weekend');
+  }
         const dayOfWeekElement = document.createElement('span');
         dayOfWeekElement.classList.add('page-nav__day-week');
         dayOfWeekElement.textContent = dayOfWeek;

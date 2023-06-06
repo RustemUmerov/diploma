@@ -1,4 +1,5 @@
-let selectedDate = null;
+let selectedDate = new Date();
+let activeNavItem;
 function createFilmSection(film) {
   const filmSection = document.createElement('section');
   filmSection.classList.add('movie');
@@ -127,23 +128,32 @@ function createSeancesList(hall, film, seances, selectedDate) {
   return seancesList;
 }
 
-
-
-
 function handleSeanceClick(timestamp, hallId, seanceId) {
-  // Запоминаем данные о выбранном сеансе
+
   sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
   sessionStorage.setItem('selectedSeanceHallId', hallId);
   sessionStorage.setItem('selectedSeanceId', seanceId);
-  
-  // Вывод данных в консоль для проверки
+
   console.log('Запомненные данные о сеансе:');
   console.log('Timestamp:', timestamp);
   console.log('Hall ID:', hallId);
   console.log('Seance ID:', seanceId);
 }
+function setActiveNavItem() {
+  const navItems = document.querySelectorAll('.page-nav__day');
+
+  navItems.forEach((item) => {
+    item.classList.remove('page-nav__day_chosen');
+  });
+
+  const selectedNavItem = document.querySelector('.page-nav__day_today, .page-nav__day_weekend');
+  if (selectedNavItem) {
+    selectedNavItem.classList.add('page-nav__day_chosen');
+  }
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+	 
   const url = 'https://jscp-diplom.netoserver.ru/';
   const requestData = 'event=update';
   let films, halls, seances;
@@ -175,7 +185,16 @@ document.addEventListener('DOMContentLoaded', function() {
           const filmSection = createFilmSection(film);
 
           halls.result.forEach((hall) => {
-            const hallTitle = document.createElement('h3');
+			const hallSeances = seances.result.filter((seance) => seance.seance_filmid === film.film_id && seance.seance_hallid === hall.hall_id);
+			const hallOpen = hall.hall_open;
+
+			if (hallOpen === 0 || hallSeances.length === 0) {
+        // Пропускаем создание блоков для зала без сеансов или с hall_open = 0
+			return;
+      }
+
+			
+			const hallTitle = document.createElement('h3');
             hallTitle.classList.add('movie-seances__hall-title');
             hallTitle.textContent = hall.hall_name;
             filmSection.querySelector('.movie-seances__hall').appendChild(hallTitle);
@@ -192,55 +211,58 @@ document.addEventListener('DOMContentLoaded', function() {
       buildMovieBlocks();
 
       const currentDate = new Date();
-
       const navElement = document.querySelector('.page-nav');
+	  
       navElement.innerHTML = '';
+	  
+	  for (let i = 0; i < 7; i++) {
+  const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
+  const dayOfWeek = date.toLocaleDateString('ru-RU', { weekday: 'short' });
+  const dayOfMonth = date.getDate();
 
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
+  const link = document.createElement('a');
+  link.classList.add('page-nav__day');
+  link.href = '#';
 
-        const dayOfWeek = date.toLocaleDateString('ru-RU', { weekday: 'short' });
-        const dayOfMonth = date.getDate();
-
-        const link = document.createElement('a');
-        link.classList.add('page-nav__day');
-        link.href = '#';
-		
-		if (i === 0) {
+  if (i === 0) {
     link.classList.add('page-nav__day_today');
+	link.classList.add('page-nav__day_chosen');
   }
-		if (date.getDay() === 0 || date.getDay() === 6) {
+
+  if (date.getDay() === 0 || date.getDay() === 6) {
     link.classList.add('page-nav__day_weekend');
   }
-        const dayOfWeekElement = document.createElement('span');
-        dayOfWeekElement.classList.add('page-nav__day-week');
-        dayOfWeekElement.textContent = dayOfWeek;
 
-        const dayOfMonthElement = document.createElement('span');
-        dayOfMonthElement.classList.add('page-nav__day-number');
-        dayOfMonthElement.textContent = dayOfMonth;
+  const dayOfWeekElement = document.createElement('span');
+  dayOfWeekElement.classList.add('page-nav__day-week');
+  dayOfWeekElement.textContent = dayOfWeek;
 
-        link.appendChild(dayOfWeekElement);
-        link.appendChild(dayOfMonthElement);
+  const dayOfMonthElement = document.createElement('span');
+  dayOfMonthElement.classList.add('page-nav__day-number');
+  dayOfMonthElement.textContent = dayOfMonth;
 
-        /*link.addEventListener('click', function() {
-          buildMovieBlocks();
-        });*/
-		link.addEventListener('click', function(event) {
-		event.preventDefault();
-		
-		console.log(this);
-		
-		if (this.classList.contains('page-nav__day')) {
-			const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
-			selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-		buildMovieBlocks();
-  }
-});
+  link.appendChild(dayOfWeekElement);
+  link.appendChild(dayOfMonthElement);
 
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
 
-        navElement.appendChild(link);
-      }
+    const navItems = document.querySelectorAll('.page-nav__day');
+
+    navItems.forEach((item) => {
+      item.classList.remove('page-nav__day_chosen');
+    });
+
+    this.classList.add('page-nav__day_chosen');
+
+    const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
+    selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+
+    buildMovieBlocks();
+  });
+
+  navElement.appendChild(link);
+}
     } else {
       console.error('Произошла ошибка при выполнении запроса:', xhr.status);
     }

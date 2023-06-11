@@ -53,7 +53,7 @@ function createFilmSection(film) {
   return filmSection;
 }
 
-function createSeancesList(hall, film, seances, selectedDate) {
+function createSeancesList(hall, film, seances, seanceTime) {
   const seancesList = document.createElement('ul');
   seancesList.classList.add('movie-seances__list');
   const hallSeances = seances.result.filter((seance) => seance.seance_filmid === film.film_id && seance.seance_hallid === hall.hall_id);
@@ -61,15 +61,17 @@ function createSeancesList(hall, film, seances, selectedDate) {
 	if (hallSeances.length > 0) {
 		hallSeances.forEach((seance) => {
 			const currentTime = new Date(); // Текущее время
-			const seanceTime = new Date();
+			//const seanceTime = new Date();
+			const seanceTime = new Date(parseInt(sessionStorage.getItem('selectedDate')));
+
+      console.log(seanceTime);
+
 			const [hours, minutes] = seance.seance_time.split(':');
 			seanceTime.setHours(hours);
 			seanceTime.setMinutes(minutes);
 
 				// Проверяем, если время сеанса еще не прошло
-			if (selectedDate === null || selectedDate.toDateString() === new Date().toDateString()){
-				const currentTime = new Date();
-				if (seanceTime > currentTime) {
+			if (seanceTime > currentTime){
 					const seanceTimeBlock = document.createElement('li');
 					seanceTimeBlock.classList.add('movie-seances__time-block');
 					seancesList.appendChild(seanceTimeBlock);
@@ -85,7 +87,6 @@ function createSeancesList(hall, film, seances, selectedDate) {
 					  const timestamp = seanceTime.getTime() / 1000;
 					  const hallId = hall.hall_id;
 					  const seanceId = seance.seance_id;
-					  const selectedDate = sessionStorage.getItem('selectedDate');
 					  
 					  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
 					  sessionStorage.setItem('selectedSeanceHallId', hallId);
@@ -98,7 +99,6 @@ function createSeancesList(hall, film, seances, selectedDate) {
 					  console.log('Seance ID:', seanceId);
 					  console.log('Selected Date:', selectedDate);
 					});
-				}
 			}else {
 				const seanceTimeBlock = document.createElement('li');
 				seanceTimeBlock.classList.add('movie-seances__time-block');
@@ -270,7 +270,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
     selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-sessionStorage.setItem('selectedDate', selectedDate);
+    console.log(selectedDate.getTime());
+//sessionStorage.setItem('selectedDate', selectedDate);
+sessionStorage.setItem('selectedDate', selectedDate.getTime());
     buildMovieBlocks();
   });
 

@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const selectedSeanceId = sessionStorage.getItem('selectedSeanceId');
   const selectedMovieTitle = sessionStorage.getItem('selectedMovieTitle');
   const selectedHours = sessionStorage.getItem('selectedHours');
-  const selectedMinutes = sessionStorage.getItem('selectedMinutes');const selectedDate = sessionStorage.getItem('selectedDate');
+  const selectedMinutes = sessionStorage.getItem('selectedMinutes');
+
+  const selectedDate = sessionStorage.getItem('selectedDate');
 
   // Вывод данных в консоль для проверки
   console.log('Полученные данные о сеансе:');
@@ -26,15 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
   requestBody.append('hallId', selectedSeanceHallId);
   requestBody.append('seanceId', selectedSeanceId);
 	
-	const movieTitle = sessionStorage.getItem('selectedMovieTitle');
+	/*const movieTitle = sessionStorage.getItem('selectedMovieTitle');*/
 const seanceStartTime = sessionStorage.getItem('selectedSeanceStartTime');
 const hallName = sessionStorage.getItem('selectedHallName');
 
 const buyingInfoTitle = document.querySelector('.buying__info-title');
-buyingInfoTitle.textContent = movieTitle;
+buyingInfoTitle.textContent = `${selectedMovieTitle}`;
 
 const buyingInfoStart = document.querySelector('.buying__info-start');
-buyingInfoStart.textContent = `Начало сеанса: ${seanceStartTime}`;
+buyingInfoStart.textContent = `Начало сеанса: ${selectedHours}:${selectedMinutes}`;
 
 const buyingInfoHall = document.querySelector('.buying__info-hall');
 buyingInfoHall.textContent = `Зал ${hallName}`;
@@ -44,7 +46,7 @@ buyingInfoHall.textContent = `Зал ${hallName}`;
   fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',
     headers: headers,
-    body: requestBody
+    body: requestBody.toString()
   })
     .then(response => response.text())
     .then(htmlString => {

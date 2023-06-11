@@ -85,16 +85,18 @@ function createSeancesList(hall, film, seances, selectedDate) {
 					  const timestamp = seanceTime.getTime() / 1000;
 					  const hallId = hall.hall_id;
 					  const seanceId = seance.seance_id;
+					  const selectedDate = sessionStorage.getItem('selectedDate');
 					  
 					  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
 					  sessionStorage.setItem('selectedSeanceHallId', hallId);
 					  sessionStorage.setItem('selectedSeanceId', seanceId);
-					  
+					  sessionStorage.setItem('selectedHours', hours);sessionStorage.setItem('selectedMinutes', minutes);
 					  // Вывод данных в консоль для проверки
 					  console.log('Запомненные данные о сеансе:');
 					  console.log('Timestamp:', timestamp);
 					  console.log('Hall ID:', hallId);
 					  console.log('Seance ID:', seanceId);
+					  console.log('Selected Date:', selectedDate);
 					});
 				}
 			}else {
@@ -120,6 +122,7 @@ function createSeancesList(hall, film, seances, selectedDate) {
 					console.log('Timestamp:', timestamp);
 					console.log('Hall ID:', hallId);
 					console.log('Seance ID:', seanceId);
+					
 				});
 			}
 		});
@@ -128,11 +131,21 @@ function createSeancesList(hall, film, seances, selectedDate) {
   return seancesList;
 }
 
-function handleSeanceClick(timestamp, hallId, seanceId) {
+function handleSeanceClick(timestamp, hallId, seanceId, movieTitle) {
 
   sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
   sessionStorage.setItem('selectedSeanceHallId', hallId);
   sessionStorage.setItem('selectedSeanceId', seanceId);
+  // Получаем выбранную дату из sessionStorage
+  const selectedDate = sessionStorage.getItem('selectedDate');
+  // Сохраняем выбранную дату в sessionStorage
+  sessionStorage.setItem('selectedSeanceDate', selectedDate);
+  
+  
+  sessionStorage.setItem('selectedMovieTitle', movieTitle);
+sessionStorage.setItem('selectedSeanceStartTime', seanceStartTime);
+sessionStorage.setItem('selectedHallName', hallName);
+  
 
   console.log('Запомненные данные о сеансе:');
   console.log('Timestamp:', timestamp);
@@ -257,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
     selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-
+sessionStorage.setItem('selectedDate', selectedDate);
     buildMovieBlocks();
   });
 

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Получение данных из sessionStorage
+
   let seance = JSON.parse(sessionStorage.getItem('seance'));
 
   const date = new Date(seance.timestamp);
@@ -12,17 +12,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const buyingInfoHall = document.querySelector('.buying__info-hall');
   buyingInfoHall.textContent = seance.hall.hall_name; 
-  
- // const hallLayoutContainer = document.getElementById('hall-layout-container');
-    //  hallLayoutContainer.innerHTML = seance.hall.hall_config;
- //const config = document.querySelector('.hall-layout-container');
- // config.innerHTML = seance.hall.hall_config;  
 
-  // Вывод данных в консоль для проверки
   console.log('Полученные данные о сеансе:');
   console.log(seance);
 
-  // Отправка POST-запроса для получения схемы расположения мест
+const hallConfig = seance.hall.hall_config;
+console.log(hallConfig);
+
+const buyingSection = document.querySelector('.conf-step');
+  buyingSection.innerHTML = hallConfig;
+
+
   const headers = new Headers();
   headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -31,13 +31,15 @@ document.addEventListener('DOMContentLoaded', function() {
   requestBody.append('timestamp', seance.timestamp / 1000);
   requestBody.append('hallId', seance.seance_hallid);
   requestBody.append('seanceId', seance.seance_id);
-	
+  
+  console.log(requestBody);
+  
   fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',
     headers: headers,
     body: requestBody.toString()
   })
-    .then(response => response.text())
+    .then(response => response.json())
     .then(htmlString => {
       // Вывод полученной HTML-строки в консоль для проверки
       console.log(htmlString);

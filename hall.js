@@ -26,14 +26,18 @@ const buyingSection = document.querySelector('.conf-step');
   const headers = new Headers();
   headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
+
+
+
+
   const requestBody = new URLSearchParams();
   requestBody.append('event', 'get_hallConfig');
   requestBody.append('timestamp', seance.timestamp / 1000);
   requestBody.append('hallId', seance.seance_hallid);
   requestBody.append('seanceId', seance.seance_id);
-  
-  console.log(requestBody);
-  
+
+ console.log(requestBody.toString());
+ 
   fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',
     headers: headers,
@@ -48,7 +52,29 @@ const buyingSection = document.querySelector('.conf-step');
       const hallLayoutContainer = document.getElementById('hall-layout-container');
       hallLayoutContainer.innerHTML = htmlString;
     })
+	
+
     .catch(error => {
       console.error(error);
     });
+	
+	
+
+/*const requestBody = 'event=get_hallConfig&timestamp=$1687184404.483&hallId=$71&seanceId=$64';
+
+fetch('https://jscp-diplom.netoserver.ru/', {
+  method: 'POST',
+  headers: headers,
+  body: requestBody
+})
+  .then(response => response.text())
+  .then(htmlString => {
+    console.log(htmlString);
+    // Дальнейшая обработка полученной HTML-строки
+  })
+  .catch(error => {
+    console.error(error);
+  });
+*/
+	
 });

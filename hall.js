@@ -1,47 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Получение данных из sessionStorage
-  const selectedSeanceTimestamp = sessionStorage.getItem('selectedSeanceTimestamp');
-  const selectedSeanceHallId = sessionStorage.getItem('selectedSeanceHallId');
-  const selectedSeanceId = sessionStorage.getItem('selectedSeanceId');
-  const selectedMovieTitle = sessionStorage.getItem('selectedMovieTitle');
-  const selectedHours = sessionStorage.getItem('selectedHours');
-  const selectedMinutes = sessionStorage.getItem('selectedMinutes');
+  let seance = JSON.parse(sessionStorage.getItem('seance'));
 
-  const selectedDate = sessionStorage.getItem('selectedDate');
+  const date = new Date(seance.timestamp);
+
+  const buyingInfoTitle = document.querySelector('.buying__info-title');
+  buyingInfoTitle.textContent = seance.film.film_name;
+
+  const buyingInfoStart = document.querySelector('.buying__info-start');
+  buyingInfoStart.textContent = 'Начало сеанса: '+seance.seance_time;
+
+  const buyingInfoHall = document.querySelector('.buying__info-hall');
+  buyingInfoHall.textContent = seance.hall.hall_name; 
+  
+ // const hallLayoutContainer = document.getElementById('hall-layout-container');
+    //  hallLayoutContainer.innerHTML = seance.hall.hall_config;
+ //const config = document.querySelector('.hall-layout-container');
+ // config.innerHTML = seance.hall.hall_config;  
 
   // Вывод данных в консоль для проверки
   console.log('Полученные данные о сеансе:');
-  console.log('Timestamp:', selectedSeanceTimestamp);
-  console.log('Hall ID:', selectedSeanceHallId);
-  console.log('Seance ID:', selectedSeanceId);
-  console.log('Title:', selectedMovieTitle);
-  console.log('Hours:', selectedHours);
-  console.log('Min:', selectedMinutes);
-  console.log('Date:', selectedDate);
+  console.log(seance);
 
   // Отправка POST-запроса для получения схемы расположения мест
   const headers = new Headers();
   headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
   const requestBody = new URLSearchParams();
   requestBody.append('event', 'get_hallConfig');
-  requestBody.append('timestamp', selectedSeanceTimestamp);
-  requestBody.append('hallId', selectedSeanceHallId);
-  requestBody.append('seanceId', selectedSeanceId);
-	
-	/*const movieTitle = sessionStorage.getItem('selectedMovieTitle');*/
-const seanceStartTime = sessionStorage.getItem('selectedSeanceStartTime');
-const hallName = sessionStorage.getItem('selectedHallName');
-
-const buyingInfoTitle = document.querySelector('.buying__info-title');
-buyingInfoTitle.textContent = `${selectedMovieTitle}`;
-
-const buyingInfoStart = document.querySelector('.buying__info-start');
-buyingInfoStart.textContent = `Начало сеанса: ${selectedHours}:${selectedMinutes}`;
-
-const buyingInfoHall = document.querySelector('.buying__info-hall');
-buyingInfoHall.textContent = `Зал ${hallName}`;
-
-	
+  requestBody.append('timestamp', seance.timestamp / 1000);
+  requestBody.append('hallId', seance.seance_hallid);
+  requestBody.append('seanceId', seance.seance_id);
 	
   fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',

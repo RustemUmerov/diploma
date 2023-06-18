@@ -1,3 +1,5 @@
+let films, halls;
+
 let selectedDate = new Date();
 let activeNavItem;
 function createFilmSection(film) {
@@ -53,105 +55,96 @@ function createFilmSection(film) {
   return filmSection;
 }
 
+const createSeancesContainer = (list) => {
+  const block = document.createElement('li');
+  block.classList.add('movie-seances__time-block');
+  list.appendChild(block);
+
+  return block;
+}
+
+const getSelectedDate = () => {
+  const selected = parseInt(sessionStorage.getItem('selectedDate', null));
+
+  return selected ? new Date(selected) : new Date();
+}
+
+const getSeanceDate = (seance) => {
+  const date = getSelectedDate();
+
+  const [hours, minutes] = seance.seance_time.split(':');
+  date.setHours(hours);
+  date.setMinutes(minutes);
+
+  return date;
+}
+
+const addSeanceBtn = (seance, container) => {
+  let date = getSeanceDate(seance);
+
+  seance.timestamp = getSeanceDate(seance).getTime();
+
+  let active = seance.timestamp > new Date();
+
+  const btn = document.createElement('a');
+  btn.classList.add('movie-seances__time');
+  btn.href = active ? 'hall.html' : '#'; 
+  btn.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  container.appendChild(btn);
+
+  if(!active) {
+    return;
+  }
+
+  seance.film = films.result.find(film => seance.seance_filmid === film.film_id);
+
+  seance.hall = halls.result.find(hall => seance.seance_hallid === hall.hall_id);
+
+  btn.dataset.seance = JSON.stringify(seance);
+
+  btn.addEventListener('click', e => sessionStorage.setItem('seance', e.target.dataset.seance));
+}
+
 function createSeancesList(hall, film, seances, seanceTime) {
-  const seancesList = document.createElement('ul');
-  seancesList.classList.add('movie-seances__list');
+  const list = document.createElement('ul');
+  list.classList.add('movie-seances__list');
+
   const hallSeances = seances.result.filter((seance) => seance.seance_filmid === film.film_id && seance.seance_hallid === hall.hall_id);
 
-	if (hallSeances.length > 0) {
-		hallSeances.forEach((seance) => {
-			const currentTime = new Date(); // Текущее время
-			//const seanceTime = new Date();
-			const seanceTime = new Date(parseInt(sessionStorage.getItem('selectedDate')));
+	if (!hallSeances.length) {
+    return;
+  }
 
-      console.log(seanceTime);
+	hallSeances.forEach((seance) => {
+    const container = createSeancesContainer(list);
 
-			const [hours, minutes] = seance.seance_time.split(':');
-			seanceTime.setHours(hours);
-			seanceTime.setMinutes(minutes);
-
-				// Проверяем, если время сеанса еще не прошло
-			if (seanceTime > currentTime){
-					const seanceTimeBlock = document.createElement('li');
-					seanceTimeBlock.classList.add('movie-seances__time-block');
-					seancesList.appendChild(seanceTimeBlock);
-					const seanceTimeLink = document.createElement('a');
-					seanceTimeLink.classList.add('movie-seances__time');
-					seanceTimeLink.href = 'hall.html'; 
-					seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-					seanceTimeBlock.appendChild(seanceTimeLink);
-
-	
-					seanceTimeLink.addEventListener('click', function(event) {
-					  // Запоминаем данные о выбранном сеансе
-					  const timestamp = seanceTime.getTime() / 1000;
-					  const hallId = hall.hall_id;
-					  const seanceId = seance.seance_id;
-					  
-					  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-					  sessionStorage.setItem('selectedSeanceHallId', hallId);
-					  sessionStorage.setItem('selectedSeanceId', seanceId);
-					  sessionStorage.setItem('selectedHours', hours);sessionStorage.setItem('selectedMinutes', minutes);
-					  // Вывод данных в консоль для проверки
-					  console.log('Запомненные данные о сеансе:');
-					  console.log('Timestamp:', timestamp);
-					  console.log('Hall ID:', hallId);
-					  console.log('Seance ID:', seanceId);
-					  console.log('Selected Date:', selectedDate);
-					});
-			}else {
-				const seanceTimeBlock = document.createElement('li');
-				seanceTimeBlock.classList.add('movie-seances__time-block');
-				seancesList.appendChild(seanceTimeBlock);
-
-				const seanceTimeLink = document.createElement('a');
-				seanceTimeLink.classList.add('movie-seances__time');
-				seanceTimeLink.href = 'hall.html'; 
-				seanceTimeLink.textContent = seanceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-				seanceTimeBlock.appendChild(seanceTimeLink);
-				seanceTimeLink.addEventListener('click', function(event) {
-					const timestamp = seanceTime.getTime() / 1000; 
-					const hallId = hall.hall_id; 
-					const seanceId = seance.seance_id; 
-					sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-					sessionStorage.setItem('selectedSeanceHallId', hallId);
-					sessionStorage.setItem('selectedSeanceId', seanceId);
+		addSeanceBtn(seance, container);
+	});
   
-					// Вывод данных в консоль для проверки
-					console.log('Запомненные данные о сеансе:');
-					console.log('Timestamp:', timestamp);
-					console.log('Hall ID:', hallId);
-					console.log('Seance ID:', seanceId);
-					
-				});
-			}
-		});
-	}
-  
-  return seancesList;
+  return list;
 }
 
-function handleSeanceClick(timestamp, hallId, seanceId, movieTitle) {
+// function handleSeanceClick(timestamp, hallId, seanceId, movieTitle) {
 
-  sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-  sessionStorage.setItem('selectedSeanceHallId', hallId);
-  sessionStorage.setItem('selectedSeanceId', seanceId);
-  // Получаем выбранную дату из sessionStorage
-  const selectedDate = sessionStorage.getItem('selectedDate');
-  // Сохраняем выбранную дату в sessionStorage
-  sessionStorage.setItem('selectedSeanceDate', selectedDate);
+//   sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
+//   sessionStorage.setItem('selectedSeanceHallId', hallId);
+//   sessionStorage.setItem('selectedSeanceId', seanceId);
+//   // Получаем выбранную дату из sessionStorage
+//   const selectedDate = sessionStorage.getItem('selectedDate');
+//   // Сохраняем выбранную дату в sessionStorage
+//   sessionStorage.setItem('selectedSeanceDate', selectedDate);
   
   
-  sessionStorage.setItem('selectedMovieTitle', movieTitle);
-sessionStorage.setItem('selectedSeanceStartTime', seanceStartTime);
-sessionStorage.setItem('selectedHallName', hallName);
+//   sessionStorage.setItem('selectedMovieTitle', movieTitle);
+// sessionStorage.setItem('selectedSeanceStartTime', seanceStartTime);
+// sessionStorage.setItem('selectedHallName', hallName);
   
 
-  console.log('Запомненные данные о сеансе:');
-  console.log('Timestamp:', timestamp);
-  console.log('Hall ID:', hallId);
-  console.log('Seance ID:', seanceId);
-}
+//   console.log('Запомненные данные о сеансе:');
+//   console.log('Timestamp:', timestamp);
+//   console.log('Hall ID:', hallId);
+//   console.log('Seance ID:', seanceId);
+// }
 function setActiveNavItem() {
   const navItems = document.querySelectorAll('.page-nav__day');
 
@@ -169,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	 
   const url = 'https://jscp-diplom.netoserver.ru/';
   const requestData = 'event=update';
-  let films, halls, seances;
+  let seances;
   const xhr = new XMLHttpRequest();
   xhr.open('POST', url);
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -229,17 +222,27 @@ document.addEventListener('DOMContentLoaded', function() {
       navElement.innerHTML = '';
 	  
 	  for (let i = 0; i < 7; i++) {
-  const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + i);
-  const dayOfWeek = date.toLocaleDateString('ru-RU', { weekday: 'short' });
-  const dayOfMonth = date.getDate();
+      const date = new Date();
+      date.setDate(currentDate.getDate()+i);
+
+      const dayOfWeek = date.toLocaleDateString('ru-RU', { weekday: 'short' });
+      const dayOfMonth = date.getDate();
 
   const link = document.createElement('a');
   link.classList.add('page-nav__day');
   link.href = '#';
+  link.dataset.date = date.getTime();
 
   if (i === 0) {
     link.classList.add('page-nav__day_today');
-	link.classList.add('page-nav__day_chosen');
+  }
+
+  console.log(date.getTime(), getSelectedDate().getTime());
+
+  let selectedDate = getSelectedDate();
+
+  if (date.getFullYear() === selectedDate.getFullYear() && date.getMonth() === selectedDate.getMonth() && date.getDay() === selectedDate.getDay()) {
+	  link.classList.add('page-nav__day_chosen');
   }
 
   if (date.getDay() === 0 || date.getDay() === 6) {
@@ -268,11 +271,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     this.classList.add('page-nav__day_chosen');
 
-    const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
-    selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    console.log(selectedDate.getTime());
+    // const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
+    // selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+    // console.log(selectedDate.getTime());
 //sessionStorage.setItem('selectedDate', selectedDate);
-sessionStorage.setItem('selectedDate', selectedDate.getTime());
+    sessionStorage.setItem('selectedDate', this.dataset.date);
     buildMovieBlocks();
   });
 

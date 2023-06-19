@@ -444,3 +444,6 @@ body {
  }
 
 
+span.conf-step__chair {
+    cursor: pointer;
+}

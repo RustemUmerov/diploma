@@ -124,27 +124,6 @@ function createSeancesList(hall, film, seances, seanceTime) {
   return list;
 }
 
-// function handleSeanceClick(timestamp, hallId, seanceId, movieTitle) {
-
-//   sessionStorage.setItem('selectedSeanceTimestamp', timestamp);
-//   sessionStorage.setItem('selectedSeanceHallId', hallId);
-//   sessionStorage.setItem('selectedSeanceId', seanceId);
-//   // Получаем выбранную дату из sessionStorage
-//   const selectedDate = sessionStorage.getItem('selectedDate');
-//   // Сохраняем выбранную дату в sessionStorage
-//   sessionStorage.setItem('selectedSeanceDate', selectedDate);
-  
-  
-//   sessionStorage.setItem('selectedMovieTitle', movieTitle);
-// sessionStorage.setItem('selectedSeanceStartTime', seanceStartTime);
-// sessionStorage.setItem('selectedHallName', hallName);
-  
-
-//   console.log('Запомненные данные о сеансе:');
-//   console.log('Timestamp:', timestamp);
-//   console.log('Hall ID:', hallId);
-//   console.log('Seance ID:', seanceId);
-// }
 function setActiveNavItem() {
   const navItems = document.querySelectorAll('.page-nav__day');
 
@@ -195,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const hallOpen = hall.hall_open;
 
 			if (hallOpen === 0 || hallSeances.length === 0) {
-        // Пропускаем создание блоков для зала без сеансов или с hall_open = 0
+        
 			return;
       }
 
@@ -205,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hallTitle.textContent = hall.hall_name;
             filmSection.querySelector('.movie-seances__hall').appendChild(hallTitle);
 
-            const seancesList = createSeancesList(hall, film, seances, selectedDate);//1
+            const seancesList = createSeancesList(hall, film, seances, selectedDate);
             filmSection.querySelector('.movie-seances__hall').appendChild(seancesList);
           });
 
@@ -271,10 +250,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     this.classList.add('page-nav__day_chosen');
 
-    // const day = parseInt(this.querySelector('.page-nav__day-number').textContent);
-    // selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    // console.log(selectedDate.getTime());
-//sessionStorage.setItem('selectedDate', selectedDate);
     sessionStorage.setItem('selectedDate', this.dataset.date);
     buildMovieBlocks();
   });

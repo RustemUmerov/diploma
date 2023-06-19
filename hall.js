@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log(seance);
 
 const hallConfig = seance.hall.hall_config;
-console.log(hallConfig);
+//console.log(hallConfig);
 
-const buyingSection = document.querySelector('.conf-step');
+const buyingSection = document.querySelector('.conf-step__wrapper');
   buyingSection.innerHTML = hallConfig;
 
 
@@ -27,21 +27,18 @@ const buyingSection = document.querySelector('.conf-step');
   headers.append('Content-Type', 'application/x-www-form-urlencoded');
 
 
-
-
-
   const requestBody = new URLSearchParams();
   requestBody.append('event', 'get_hallConfig');
-  requestBody.append('timestamp', seance.timestamp / 1000);
-  requestBody.append('hallId', seance.seance_hallid);
-  requestBody.append('seanceId', seance.seance_id);
+  requestBody.append('timestamp', Math.trunc(seance.timestamp / 1000));
+  requestBody.append('hallId', String(seance.seance_hallid));
+  requestBody.append('seanceId', String(seance.seance_id));
 
  console.log(requestBody.toString());
  
   fetch('https://jscp-diplom.netoserver.ru/', {
     method: 'POST',
     headers: headers,
-    body: requestBody.toString()
+    body: requestBody
   })
     .then(response => response.json())
     .then(htmlString => {
@@ -57,24 +54,52 @@ const buyingSection = document.querySelector('.conf-step');
     .catch(error => {
       console.error(error);
     });
-	
-	
+// Получаем все элементы с классом "conf-step__chair"
+const chairElements = document.querySelectorAll('.conf-step__chair');
 
-/*const requestBody = 'event=get_hallConfig&timestamp=$1687184404.483&hallId=$71&seanceId=$64';
-
-fetch('https://jscp-diplom.netoserver.ru/', {
-  method: 'POST',
-  headers: headers,
-  body: requestBody
-})
-  .then(response => response.text())
-  .then(htmlString => {
-    console.log(htmlString);
-    // Дальнейшая обработка полученной HTML-строки
-  })
-  .catch(error => {
-    console.error(error);
+// Добавляем обработчик клика для каждого элемента
+chairElements.forEach(chairElement => {
+  chairElement.addEventListener('click', () => {
+    // Добавляем класс "conf-step__chair_taken"
+    chairElement.classList.add('conf-step__chair_taken');
   });
-*/
-	
 });
+
+const acceptButton = document.querySelector('.acceptin-button');
+
+acceptButton.addEventListener('click', () => {
+  const timestamp = Math.trunc(seance.timestamp / 1000); // Значение timestamp с учетом даты в секундах
+  const hallId = seance.seance_hallid; // ID зала
+  const seanceId = seance.seance_id; // ID сеанса
+  const hallConfiguration = document.querySelector('.conf-step__wrapper').innerHTML; // HTML-разметка из контейнера conf-step__wrapper
+
+  const headers = new Headers();
+  headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+  const requestBody = new URLSearchParams();
+  requestBody.append('event', 'sale_add');
+  requestBody.append('timestamp', timestamp);
+  requestBody.append('hallId', hallId);
+  requestBody.append('seanceId', seanceId);
+  requestBody.append('hallConfiguration', hallConfiguration);
+
+  fetch('https://jscp-diplom.netoserver.ru/', {
+    method: 'POST',
+    headers: headers,
+    body: requestBody.toString()
+  })
+    .then(response => response.json())
+    .then(result => {
+      console.log('Результат бронирования:', result);
+      // Дополнительные действия после успешного бронирования
+    })
+    .catch(error => {
+      console.error('Ошибка при бронировании:', error);
+      // Дополнительные действия в случае ошибки при бронировании
+    });
+});
+
+
+
+});
+

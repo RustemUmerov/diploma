@@ -25,7 +25,8 @@ const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 console.log(startOfDay);
 console.log(seance_start);
 
-const timestamp = (startOfDay.getTime() / 1000) + (seance_start * 60);
+//const timestamp = (startOfDay.getTime() / 1000) + (seance_start * 60);
+const timestamp = Math.trunc(startOfDay.getTime() / 1000) + (seance_start * 60);
 console.log(timestamp);
 
   const headers = new Headers();

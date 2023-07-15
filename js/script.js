@@ -82,7 +82,9 @@ const getSeanceDate = (seance) => {
 const addSeanceBtn = (seance, container) => {
   let date = getSeanceDate(seance);
 
-  seance.timestamp = getSeanceDate(seance).getTime();
+
+ seance.timestamp = getSeanceDate(seance).getTime();
+ 
 
   let active = seance.timestamp > new Date();
 
@@ -250,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     this.classList.add('page-nav__day_chosen');
 
-    sessionStorage.setItem('selectedDate', this.dataset.date);
+    sessionStorage.setItem('selectedDate', this.dataset.date);torage.setItem('selectedDate', this.dataset.date);
     buildMovieBlocks();
   });
 

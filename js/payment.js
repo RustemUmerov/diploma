@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Отправка запроса sale_add
     const requestBody = new URLSearchParams();
     requestBody.append('event', 'sale_add');
-    requestBody.append('timestamp', timestamp);
+	requestBody.append('timestamp', Math.floor(timestamp / 1000));
+   // requestBody.append('timestamp', timestamp);
     requestBody.append('hallId', hallId);
     requestBody.append('seanceId', seanceId);
     requestBody.append('hallConfiguration', hallConfiguration);

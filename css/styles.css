@@ -447,3 +447,9 @@ body {
 .conf-step__chair {
    cursor: pointer;
 }
+
+a.movie-seances__time.disable {
+    box-shadow: none !important;
+    background: #ffffff7a !important;
+    color: #3333334f !important;
+}

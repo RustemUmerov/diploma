@@ -89,10 +89,19 @@ const addSeanceBtn = (seance, container) => {
   let active = seance.timestamp > new Date();
 
   const btn = document.createElement('a');
+ // btn.classList.add('movie-seances__time');
+ if (active) {
   btn.classList.add('movie-seances__time');
+} else {
+  btn.classList.add('movie-seances__time', 'disable');
+}
+ 
+ 
   btn.href = active ? 'hall.html' : '#'; 
   btn.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   container.appendChild(btn);
+
+
 
   if(!active) {
     return;
@@ -165,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const mainContainer = document.querySelector('main'); // Контейнер для фильмов
 
-      function buildMovieBlocks() {
+      /* function buildMovieBlocks() {
         mainContainer.innerHTML = '';
 
         films.result.forEach((film) => {
@@ -192,7 +201,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
           mainContainer.appendChild(filmSection);
         });
+      } */
+function buildMovieBlocks() {
+  mainContainer.innerHTML = '';
+
+  films.result.forEach((film) => {
+    const filmSection = createFilmSection(film);
+
+    halls.result.forEach((hall) => {
+      const hallSeances = seances.result.filter((seance) => seance.seance_filmid === film.film_id && seance.seance_hallid === hall.hall_id);
+      const hallOpen = parseInt(hall.hall_open);
+
+      if (hallOpen === 0 || hallSeances.length === 0) {
+        return;
       }
+
+      const hallTitle = document.createElement('h3');
+      hallTitle.classList.add('movie-seances__hall-title');
+      hallTitle.textContent = hall.hall_name;
+      filmSection.querySelector('.movie-seances__hall').appendChild(hallTitle);
+
+      const seancesList = createSeancesList(hall, film, seances, selectedDate);
+      filmSection.querySelector('.movie-seances__hall').appendChild(seancesList);
+    });
+
+    mainContainer.appendChild(filmSection);
+  });
+}
+
+
+
 
 
       buildMovieBlocks();

@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     this.classList.add('page-nav__day_chosen');
 
-    sessionStorage.setItem('selectedDate', this.dataset.date);torage.setItem('selectedDate', this.dataset.date);
+    sessionStorage.setItem('selectedDate', this.dataset.date);sessionStorage.setItem('selectedDate', this.dataset.date);
     buildMovieBlocks();
   });
 

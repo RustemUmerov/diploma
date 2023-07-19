@@ -70,7 +70,7 @@ priceVip.textContent = hallPriceVip;
             const selectedRow = rowIndex + 1;
             const selectedSeat = seatIndex + 1;
             selectedSeats.push({ row: selectedRow, seat: selectedSeat });
-            seat.classList.add('conf-step__chair_taken');
+            seat.classList.add('conf-step__chair_selected');
 
             if (seat.classList.contains('conf-step__chair_standart')) {
               totalCost += hallPriceStandart;
@@ -113,4 +113,5 @@ priceVip.textContent = hallPriceVip;
 
     window.location.href = 'payment.html';
   });
+
 });

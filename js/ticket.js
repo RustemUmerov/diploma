@@ -35,8 +35,26 @@ const ticketChairsSpan = document.querySelector('.ticket__chairs');
 
 
 
+const qrData = `Фильм: ${filmName} \nРяд/место: ${chairsString} \nЗал: ${hallName} \nСеанс: ${seanceTime}`;
+
+const qrcode1 = QRCreator(qrData, {
+  mode: 4,
+  eccl: 0,
+  version: -1,
+  mask: -1,
+  image: 'png',
+  modsize: -1,
+  margin: 0
+});
 
 
+const content = (qrcode) =>{
+  return qrcode.error ?
+    `недопустимые исходные данные ${qrcode.error}`:
+     qrcode.result;
+};
+
+document.getElementById('qrcode1').append( '', content(qrcode1));
 
 
 });

@@ -43,14 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const acceptButton = document.querySelector('.acceptin-button');
   acceptButton.addEventListener('click', () => {
-    // Отправка запроса sale_add
+    const updatedHallConfiguration = hallConfiguration.replace(/conf-step__chair_selected/g, 'conf-step__chair_taken');
+	
+	// Отправка запроса sale_add
     const requestBody = new URLSearchParams();
-    requestBody.append('event', 'sale_add');
-	requestBody.append('timestamp', Math.floor(timestamp / 1000));
-   // requestBody.append('timestamp', timestamp);
-    requestBody.append('hallId', hallId);
-    requestBody.append('seanceId', seanceId);
-    requestBody.append('hallConfiguration', hallConfiguration);
+  requestBody.append('event', 'sale_add');
+  requestBody.append('timestamp', timestamp);
+  requestBody.append('hallId', hallId);
+  requestBody.append('seanceId', seanceId);
+  requestBody.append('hallConfiguration', updatedHallConfiguration);
 
     const headers = new Headers();
     headers.append('Content-Type', 'application/x-www-form-urlencoded');

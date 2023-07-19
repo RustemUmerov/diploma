@@ -91,7 +91,7 @@ priceVip.textContent = hallPriceVip;
   const acceptButton = document.querySelector('.acceptin-button');
 
   acceptButton.addEventListener('click', () => {
-    const timestamp = seance.timestamp + (seance_start * 60);
+   // const timestamp = seance.timestamp + (seance_start * 60);
     const hallId = seance.seance_hallid;
     const seanceId = seance.seance_id;
     const hallConfiguration = document.querySelector('.conf-step__wrapper').innerHTML;
